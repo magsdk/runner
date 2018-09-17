@@ -1,0 +1,43 @@
+{
+    "name": "mag-runner",
+    "version": "1.0.0",
+    "description": "Runner wrapper and meta config.",
+    "author": {
+        "name": "Stanislav Kalashnik",
+        "email": "darkpark.main@gmail.com"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/magsdk/runner.git"
+    },
+    "scripts": {
+        "lint": "eslint .",
+        "test": "npm run lint"
+    },
+    "dependencies": {
+        "mag-eslint": "^1.0.1",
+        "runner-generator-eslint": "^1.0.2",
+        "runner-generator-gettext": "^1.2.1",
+        "runner-generator-livereload": "^1.1.1",
+        "runner-generator-notify": "^1.0.1",
+        "runner-generator-pug": "^1.0.1",
+        "runner-generator-repl": "^1.0.2",
+        "runner-generator-sass": "^1.0.1",
+        "runner-generator-static": "^1.0.2",
+        "runner-generator-webpack": "^1.0.2",
+        "runner-logger": "^1.0.1",
+        "runner-tools": "^1.2.1",
+        "runner": "^2.0.1",
+        "uglifyjs-webpack-plugin": "^1.2.7"
+    },
+    "keywords": [
+        "mag",
+        "sdk",
+        "magsdk",
+        "framework",
+        "runner",
+        "wrapper",
+        "config"
+    ],
+    "license": "GPL-3.0"
+}
