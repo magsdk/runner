@@ -28,7 +28,7 @@
         "runner-logger": "^1.0.1",
         "runner-tools": "^1.2.1",
         "runner": "^2.0.1",
-        "uglifyjs-webpack-plugin": "^1.2.7"
+        "uglifyjs-webpack-plugin": "^2.0.1"
     },
     "keywords": [
         "mag",
