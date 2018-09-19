@@ -130,7 +130,7 @@ module.exports = function ( config ) {
             options: {
                 pretty: true
             },
-            variables: Object.assign({}, config.vars, {package: require('../package')})
+            variables: Object.assign({}, config.vars, {package: require(path.join(process.cwd(), 'package.json'))})
         }),
 
         require('runner-generator-webpack')(webpackConfig)
