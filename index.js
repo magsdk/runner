@@ -43,8 +43,11 @@ module.exports = function ( config ) {
             ]
         };
 
-    // sanitize
+    // sanitize and prepare
     config.vars.DEVELOP = !!(config.vars.DEVELOP && config.vars.DEVELOP === 'true');
+    config.vars.LIVERELOAD = {
+        port: 35729
+    };
 
     if ( config.vars.DEVELOP ) {
         webpackConfig.mode = 'development';
