@@ -21,7 +21,6 @@ function build ( config, done ) {
 
     delete require.cache[require.resolve(packageFile)];
     packageData = require(packageFile);
-    //console.log(packageData);
 
     Object.keys(packageData.dependencies || {}).concat(Object.keys(packageData.devDependencies || {})).forEach(function ( moduleName ) {
         if ( moduleName.indexOf('-component-') !== -1 ) {
@@ -29,15 +28,31 @@ function build ( config, done ) {
         }
     });
 
-    async.parallel(modules.map(function ( moduleName ) {
-        return function ( ready ) {
-            fs.readFile(path.join('node_modules', moduleName, 'css', config.mode + '.' + config.resolution + '.css'), ready);
-        };
-    }), function ( error, results ) {
-        if ( !error ) {
+    // concatenate all given files into one
+    // without error handling (only displaying)
+    async.parallel(
+        modules.map(function ( moduleName ) {
+            return function ( ready ) {
+                var file = path.join('node_modules', moduleName, 'css', config.mode + '.' + config.resolution + '.css');
+
+                if ( !fs.existsSync(file) ) {
+                    file = path.join('node_modules', moduleName, 'css', config.mode + '.css');
+                }
+
+                fs.readFile(file, function ( error, data ) {
+                    if ( error ) {
+                        log.warn(error.toString());
+                    }
+
+                    ready(null, data);
+                });
+            };
+        }),
+        // eslint-disable-next-line handle-callback-err
+        function ( error, results ) {
             tools.write([{name: config.outFile, data: results.join('\n')}], log, done);
         }
-    });
+    );
 }
 
 
