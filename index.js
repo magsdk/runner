@@ -18,7 +18,7 @@ var path     = require('path'),
 module.exports = function ( config ) {
     var resolutions   = ['480', '576', '720', '1080'],
         source        = 'src',
-        target        = path.join('build', config.vars.TARGET || Date.now().toString()),
+        target        = path.join('build', config.vars.TARGET || (config.vars.PLATFORM || 'TARGET').toLowerCase()),
         webpackConfig = {
             mode: 'production',
             entry: path.resolve(path.join(source, 'js', 'main.js')),
