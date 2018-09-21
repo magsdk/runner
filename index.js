@@ -171,13 +171,18 @@ module.exports = function ( config ) {
 
     // main tasks
     runner.task('init', function ( done ) {
+        var fs = require('fs');
+
         tools.mkdir(
             [
                 path.join(target, 'lang'),
                 path.join(target, 'css')
             ],
             logger.wrap('init'),
-            done
+            function ( error ) {
+                fs.writeFileSync(path.join(target, '.npmignore'), fs.readFileSync('.npmignore'));
+                done(error);
+            }
         );
     });
 
