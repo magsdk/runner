@@ -49,6 +49,13 @@ module.exports = function ( config ) {
         port: 35729
     };
 
+    // escape string values
+    Object.keys(config.vars).forEach(function ( name ) {
+        if ( typeof config.vars[name] === 'string' ) {
+            config.vars[name] = '"' + config.vars[name] + '"';
+        }
+    });
+
     if ( config.vars.DEVELOP ) {
         webpackConfig.mode = 'development';
         webpackConfig.devtool = 'source-map';
