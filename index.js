@@ -165,8 +165,9 @@ module.exports = function ( config ) {
             runner.tasks,
 
             require('runner-generator-sass')({
-                file: path.join(source, 'sass', 'develop.' + resolution + '.scss'),
+                file: path.join(source, 'sass', (config.vars.DEVELOP ? 'develop.' : 'release.') + resolution + '.scss'),
                 outFile: path.join(target, 'css', 'app.' + resolution + '.css'),
+                outputStyle: config.vars.DEVELOP ? 'nested' : 'compressed',
                 sourceMap: path.join(target, 'css', 'app.' + resolution + '.map')
             }, {
                 suffix: ':' + resolution
@@ -175,7 +176,7 @@ module.exports = function ( config ) {
             css({
                 resolution: resolution,
                 outFile: path.join(target, 'css', 'sdk.' + resolution + '.css'),
-                mode: 'develop'
+                mode: config.vars.DEVELOP ? 'develop' : 'release'
             }, {
                 suffix: ':' + resolution
             })
