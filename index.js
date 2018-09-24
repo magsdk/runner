@@ -143,7 +143,18 @@ module.exports = function ( config ) {
             variables: Object.assign({}, config.vars, {package: require(path.join(process.cwd(), 'package.json'))})
         }),
 
-        require('runner-generator-webpack')(webpackConfig)
+        require('runner-generator-webpack')(webpackConfig),
+
+        require('runner-generator-npm')({
+            target: target,
+            onPublish: function ( done ) {
+                // clear
+                delete require.cache[require.resolve('package.json')];
+
+                // merge data to a new package.json for publishing
+                done(null, Object.assign({}, require('package.json'), config.package || {}));
+            }
+        })
     );
 
     resolutions.forEach(function ( resolution ) {
