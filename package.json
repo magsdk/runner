@@ -20,6 +20,7 @@
         "runner-generator-gettext": "^1.2.1",
         "runner-generator-livereload": "^1.1.1",
         "runner-generator-notify": "^1.0.1",
+        "runner-generator-npm": "^1.0.1",
         "runner-generator-pug": "^1.0.1",
         "runner-generator-repl": "^1.0.2",
         "runner-generator-sass": "^1.0.1",
