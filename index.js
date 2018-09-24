@@ -11,7 +11,8 @@ var path     = require('path'),
     logger   = require('runner-logger'),
     webpack  = require('webpack'),
     UglifyJS = require('uglifyjs-webpack-plugin'),
-    css      = require('./css');
+    css      = require('./css'),
+    cwd      = process.cwd();
 
 
 // public
@@ -140,7 +141,7 @@ module.exports = function ( config ) {
             options: {
                 pretty: true
             },
-            variables: Object.assign({}, config.vars, {package: require(path.join(process.cwd(), 'package.json'))})
+            variables: Object.assign({}, config.vars, {package: require(path.join(cwd, 'package.json'))})
         }),
 
         require('runner-generator-webpack')(webpackConfig),
@@ -148,11 +149,13 @@ module.exports = function ( config ) {
         require('runner-generator-npm')({
             target: target,
             onPublish: function ( done ) {
+                var packagePath = path.join(cwd, 'package.json');
+
                 // clear
-                delete require.cache[require.resolve('package.json')];
+                delete require.cache[packagePath];
 
                 // merge data to a new package.json for publishing
-                done(null, Object.assign({}, require('package.json'), config.package || {}));
+                done(null, Object.assign({}, require(packagePath), config.package || {}));
             }
         })
     );
