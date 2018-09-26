@@ -45,6 +45,7 @@ module.exports = function ( config ) {
         };
 
     // sanitize and prepare
+    config.vars.TYPE = (config.vars.TYPE || 'APP').toLowerCase();
     config.vars.DEVELOP = !!(config.vars.DEVELOP && config.vars.DEVELOP === 'true');
     config.vars.LIVERELOAD = {
         port: 35729
@@ -135,15 +136,6 @@ module.exports = function ( config ) {
             ]
         }),
 
-        require('runner-generator-pug')({
-            source: path.join(source, 'pug', 'main.pug'),
-            target: path.join(target, 'index.html'),
-            options: {
-                pretty: true
-            },
-            variables: Object.assign({}, config.vars, {package: require(path.join(cwd, 'package.json'))})
-        }),
-
         require('runner-generator-webpack')(webpackConfig),
 
         require('runner-generator-npm')({
@@ -160,29 +152,42 @@ module.exports = function ( config ) {
         })
     );
 
-    resolutions.forEach(function ( resolution ) {
+    if ( config.vars.TYPE === 'app' ) {
         Object.assign(
             runner.tasks,
-
-            require('runner-generator-sass')({
-                file: path.join(source, 'sass', (config.vars.DEVELOP ? 'develop.' : 'release.') + resolution + '.scss'),
-                outFile: path.join(target, 'css', 'app.' + resolution + '.css'),
-                outputStyle: config.vars.DEVELOP ? 'nested' : 'compressed',
-                sourceMap: path.join(target, 'css', 'app.' + resolution + '.map')
-            }, {
-                suffix: ':' + resolution
-            }),
-
-            css({
-                resolution: resolution,
-                outFile: path.join(target, 'css', 'sdk.' + resolution + '.css'),
-                mode: config.vars.DEVELOP ? 'develop' : 'release'
-            }, {
-                suffix: ':' + resolution
+            require('runner-generator-pug')({
+                source: path.join(source, 'pug', 'main.pug'),
+                target: path.join(target, 'index.html'),
+                options: {
+                    pretty: true
+                },
+                variables: Object.assign({}, config.vars, {package: require(path.join(cwd, 'package.json'))})
             })
         );
-    });
 
+        resolutions.forEach(function ( resolution ) {
+            Object.assign(
+                runner.tasks,
+
+                require('runner-generator-sass')({
+                    file: path.join(source, 'sass', (config.vars.DEVELOP ? 'develop.' : 'release.') + resolution + '.scss'),
+                    outFile: path.join(target, 'css', 'app.' + resolution + '.css'),
+                    outputStyle: config.vars.DEVELOP ? 'nested' : 'compressed',
+                    sourceMap: path.join(target, 'css', 'app.' + resolution + '.map')
+                }, {
+                    suffix: ':' + resolution
+                }),
+
+                css({
+                    resolution: resolution,
+                    outFile: path.join(target, 'css', 'sdk.' + resolution + '.css'),
+                    mode: config.vars.DEVELOP ? 'develop' : 'release'
+                }, {
+                    suffix: ':' + resolution
+                })
+            );
+        });
+    }
 
     // main tasks
     runner.task('init', function ( done ) {
