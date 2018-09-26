@@ -201,11 +201,12 @@ module.exports = function ( config ) {
             logger.wrap('init'),
             function ( error ) {
                 fs.writeFileSync(path.join(target, '.npmignore'), fs.readFileSync('.npmignore'));
-                done(error);
+                runner.run('gettext:prepare', function () {
+                    done(error);
+                });
             }
         );
     });
-
 
     runner.task('copy', function ( done ) {
         tools.copy(
@@ -216,6 +217,26 @@ module.exports = function ( config ) {
             logger.wrap('copy'),
             done
         );
+    });
+
+    runner.task('gettext:prepare', function ( done ) {
+        var packagePath = path.join(cwd, 'package.json'),
+            jsData      = [],
+            config;
+
+        // clear
+        delete require.cache[packagePath];
+
+        config = require(packagePath).config || {};
+
+        if ( config.name ) {
+            jsData.push('gettext("' + config.name + '");');
+        }
+        if ( config.description ) {
+            jsData.push('gettext("' + config.description + '");');
+        }
+
+        fs.writeFile(path.join(target, 'src', 'js', 'gettext.js'), jsData.join('\n'), done);
     });
 
     runner.task('sass:build', runner.parallel('sass:build:480', 'sass:build:576', 'sass:build:720', 'sass:build:1080'));
@@ -229,7 +250,7 @@ module.exports = function ( config ) {
         runner.watch(path.join(source, 'pug', '**', '*.pug'), 'pug:build');
         runner.watch(path.join(source, 'sass', '**', '*.scss'), 'sass:build');
         runner.watch(path.join(source, 'img', '**', '*'), 'copy');
-        runner.watch(path.resolve('package*json'), 'css:build');
+        runner.watch(path.resolve('package*json'), runner.parallel('css:build', 'gettext:prepare'));
         runner.run('eslint:watch');
         runner.run('webpack:watch');
     });
@@ -237,6 +258,4 @@ module.exports = function ( config ) {
     runner.task('serve', runner.parallel('static:start', 'livereload:start', 'repl:start', 'notify:start'));
 
     runner.task('default', runner.serial('build', runner.parallel('watch', 'serve')));
-
-    //console.log(runner.tasks);
 };
