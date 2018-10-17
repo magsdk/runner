@@ -23,6 +23,7 @@ module.exports = function ( config ) {
         target        = path.join('build', config.vars.TARGET || (config.vars.PLATFORM || 'TARGET').toLowerCase()),
         webpackConfig = {
             mode: 'production',
+            devtool: 'source-map',
             entry: path.resolve(path.join(source, 'js', 'main.js')),
             output: {
                 filename: 'main.js',
@@ -60,14 +61,13 @@ module.exports = function ( config ) {
 
     if ( config.vars.DEVELOP ) {
         webpackConfig.mode = 'development';
-        webpackConfig.devtool = 'source-map';
     } else {
         webpackConfig.optimization = {
             minimize: true,
             minimizer: [
                 new UglifyJS({
                     // set true to sourceMap to get correct map-file
-                    // sourceMap: true,
+                    sourceMap: true,
                     uglifyOptions: {
                         output: {
                             comments: false
