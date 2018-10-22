@@ -44,7 +44,27 @@ module.exports = function ( config ) {
                 new webpack.DefinePlugin(config.vars),
                 new webpack.optimize.OccurrenceOrderPlugin()
             ]
+        },
+        replacePlugin = {
+            tizen: new webpack.NormalModuleReplacementPlugin(
+                /node_modules\/mag-app\/index.js/,
+                path.join(process.cwd(), '/node_modules/tzn-app/index.js/')
+            ),
+
+            webos: new webpack.NormalModuleReplacementPlugin(
+                /node_modules\/mag-app\/index.js/,
+                path.join(process.cwd(), '/node_modules/webos-app/index.js/')
+            ),
+
+            smarttv: new webpack.NormalModuleReplacementPlugin(
+                /node_modules\/mag-app\/index.js/,
+                path.join(process.cwd(), '/node_modules/stv-app/index.js/')
+            )
         };
+    
+    if ( replacePlugin[config.vars.TARGET] ) {
+        webpackConfig.plugins.push(replacePlugin[config.vars.TARGET]);
+    }
 
     // sanitize and prepare
     config.vars.DEVELOP = !!(config.vars.DEVELOP && config.vars.DEVELOP === 'true');
