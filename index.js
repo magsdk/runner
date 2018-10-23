@@ -21,6 +21,7 @@ module.exports = function ( config ) {
     var resolutions   = ['480', '576', '720', '1080'],
         source        = 'src',
         target        = path.join('build', config.vars.TARGET || (config.vars.PLATFORM || 'TARGET').toLowerCase()),
+        platformName  = config.vars.PLATFORM ? config.vars.PLATFORM.toLowerCase() : config.vars.TARGET,
         webpackConfig = {
             mode: 'production',
             devtool: 'source-map',
@@ -44,7 +45,27 @@ module.exports = function ( config ) {
                 new webpack.DefinePlugin(config.vars),
                 new webpack.optimize.OccurrenceOrderPlugin()
             ]
+        },
+        replacePlugin = {
+            tizen: new webpack.NormalModuleReplacementPlugin(
+                /node_modules\/mag-app\/index.js/,
+                path.join(process.cwd(), '/node_modules/tzn-app/index.js/')
+            ),
+
+            webos: new webpack.NormalModuleReplacementPlugin(
+                /node_modules\/mag-app\/index.js/,
+                path.join(process.cwd(), '/node_modules/webos-app/index.js/')
+            ),
+
+            smarttv: new webpack.NormalModuleReplacementPlugin(
+                /node_modules\/mag-app\/index.js/,
+                path.join(process.cwd(), '/node_modules/stv-app/index.js/')
+            )
         };
+    
+    if ( replacePlugin[platformName] ) {
+        webpackConfig.plugins.push(replacePlugin[platformName]);
+    }
 
     // sanitize and prepare
     config.vars.DEVELOP = !!(config.vars.DEVELOP && config.vars.DEVELOP === 'true');
