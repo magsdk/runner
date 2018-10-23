@@ -21,6 +21,7 @@ module.exports = function ( config ) {
     var resolutions   = ['480', '576', '720', '1080'],
         source        = 'src',
         target        = path.join('build', config.vars.TARGET || (config.vars.PLATFORM || 'TARGET').toLowerCase()),
+        platformName  = config.vars.PLATFORM ? config.vars.PLATFORM.toLowerCase() : config.vars.TARGET,
         webpackConfig = {
             mode: 'production',
             devtool: 'source-map',
@@ -62,8 +63,8 @@ module.exports = function ( config ) {
             )
         };
     
-    if ( replacePlugin[config.vars.TARGET] ) {
-        webpackConfig.plugins.push(replacePlugin[config.vars.TARGET]);
+    if ( replacePlugin[platformName] ) {
+        webpackConfig.plugins.push(replacePlugin[platformName]);
     }
 
     // sanitize and prepare
